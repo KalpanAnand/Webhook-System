@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webhook System Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-bolt"></i>
+                <h1>Webhook System</h1>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-section="dashboard">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-section="event-types">
+                    <i class="fas fa-tags"></i>
+                    <span>Event Types</span>
+                </a>
+                <a href="#" class="nav-item" data-section="clients">
+                    <i class="fas fa-users"></i>
+                    <span>Clients</span>
+                </a>
+                <a href="#" class="nav-item" data-section="subscriptions">
+                    <i class="fas fa-bell"></i>
+                    <span>Subscriptions</span>
+                </a>
+                <a href="#" class="nav-item" data-section="events">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Events</span>
+                </a>
+                <a href="#" class="nav-item" data-section="webhook-deliveries">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Webhook Deliveries</span>
+                </a>
+                <a href="#" class="nav-item" data-section="dlq">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>Dead Letter Queue</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="section-header">
+                    <h2>Dashboard</h2>
+                    <p class="section-subtitle">Overview of your webhook system</p>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <i class="fas fa-tags"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="stat-event-types">0</h3>
+                            <p>Event Types</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="stat-clients">0</h3>
+                            <p>Clients</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="stat-subscriptions">0</h3>
+                            <p>Active Subscriptions</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="stat-events">0</h3>
+                            <p>Total Events</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Event Types Section -->
+            <section id="event-types" class="content-section">
+                <div class="section-header">
+                    <h2>Event Types</h2>
+                    <button class="btn btn-primary" onclick="showEventTypeModal()">
+                        <i class="fas fa-plus"></i> Create Event Type
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Event Name</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="event-types-table">
+                            <tr>
+                                <td colspan="4" class="loading">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Clients Section -->
+            <section id="clients" class="content-section">
+                <div class="section-header">
+                    <h2>Clients</h2>
+                    <button class="btn btn-primary" onclick="showClientModal()">
+                        <i class="fas fa-plus"></i> Register Client
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Client ID</th>
+                                <th>Organization</th>
+                                <th>Contact Email</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clients-table">
+                            <tr>
+                                <td colspan="3" class="loading">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Subscriptions Section -->
+            <section id="subscriptions" class="content-section">
+                <div class="section-header">
+                    <h2>Subscriptions</h2>
+                    <button class="btn btn-primary" onclick="showSubscriptionModal()">
+                        <i class="fas fa-plus"></i> Create Subscription
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Subscription ID</th>
+                                <th>Client ID</th>
+                                <th>Event Type</th>
+                                <th>Webhook URL</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="subscriptions-table">
+                            <tr>
+                                <td colspan="6" class="loading">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Events Section -->
+            <section id="events" class="content-section">
+                <div class="section-header">
+                    <h2>Events</h2>
+                    <button class="btn btn-primary" onclick="showEventModal()">
+                        <i class="fas fa-plus"></i> Ingest Event
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Event ID</th>
+                                <th>Event Type</th>
+                                <th>Payload</th>
+                                <th>Received At</th>
+                            </tr>
+                        </thead>
+                        <tbody id="events-table">
+                            <tr>
+                                <td colspan="4" class="loading">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Webhook Deliveries Section -->
+            <section id="webhook-deliveries" class="content-section">
+                <div class="section-header">
+                    <h2>Webhook Deliveries</h2>
+                    <p class="section-subtitle">Track webhook delivery status and attempts</p>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Delivery ID</th>
+                                <th>Event ID</th>
+                                <th>Subscription ID</th>
+                                <th>Status</th>
+                                <th>Attempts</th>
+                                <th>Last Attempt</th>
+                                <th>Next Attempt</th>
+                                <th>Created At</th>
+                            </tr>
+                        </thead>
+                        <tbody id="webhook-deliveries-table">
+                            <tr>
+                                <td colspan="8" class="loading">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- DLQ Section -->
+            <section id="dlq" class="content-section">
+                <div class="section-header">
+                    <h2>Dead Letter Queue</h2>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>DLQ ID</th>
+                                <th>Event ID</th>
+                                <th>Subscription ID</th>
+                                <th>Failure Reason</th>
+                                <th>Added At</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dlq-table">
+                            <tr>
+                                <td colspan="6" class="loading">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <!-- Event Type Modal -->
+    <div id="event-type-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create Event Type</h3>
+                <button class="modal-close" onclick="closeModal('event-type-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="event-type-form" onsubmit="createEventType(event)">
+                <div class="form-group">
+                    <label>Event Name</label>
+                    <input type="text" name="eventName" required placeholder="e.g., order.created">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" required placeholder="Describe this event type"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('event-type-modal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Update Event Type Modal -->
+    <div id="update-event-type-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Update Event Type</h3>
+                <button class="modal-close" onclick="closeModal('update-event-type-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="update-event-type-form" onsubmit="updateEventType(event)">
+                <input type="hidden" id="update-event-type-id" name="eventTypeId">
+                <div class="form-group">
+                    <label>Event Name</label>
+                    <input type="text" id="update-event-name" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="update-event-description" name="description" required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('update-event-type-modal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Client Modal -->
+    <div id="client-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Register Client</h3>
+                <button class="modal-close" onclick="closeModal('client-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="client-form" onsubmit="createClient(event)">
+                <div class="form-group">
+                    <label>Organization Name</label>
+                    <input type="text" name="organizationName" required placeholder="e.g., Acme Corp">
+                </div>
+                <div class="form-group">
+                    <label>Contact Email</label>
+                    <input type="email" name="contactEmail" required placeholder="contact@example.com">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('client-modal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Subscription Modal -->
+    <div id="subscription-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create Subscription</h3>
+                <button class="modal-close" onclick="closeModal('subscription-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="subscription-form" onsubmit="createSubscription(event)">
+                <div class="form-group">
+                    <label>Client ID</label>
+                    <input type="text" name="clientId" id="subscription-client-select" required placeholder="e.g., c-552">
+                </div>
+                <div class="form-group">
+                    <label>Event Type</label>
+                    <select name="eventTypeId" id="subscription-event-select" required>
+                        <option value="">Select an event type...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Webhook URL</label>
+                    <input type="url" name="webhookUrl" required placeholder="https://example.com/webhook">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('subscription-modal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Subscribe</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Update Subscription Modal -->
+    <div id="update-subscription-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Update Subscription</h3>
+                <button class="modal-close" onclick="closeModal('update-subscription-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="update-subscription-form" onsubmit="updateSubscription(event)">
+                <input type="hidden" id="update-subscription-id" name="subscriptionId">
+                <div class="form-group">
+                    <label>Event Type</label>
+                    <select id="update-subscription-event" name="eventTypeId" required>
+                        <option value="">Select an event type...</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('update-subscription-modal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Event Modal -->
+    <div id="event-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Ingest Event</h3>
+                <button class="modal-close" onclick="closeModal('event-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="event-form" onsubmit="ingestEvent(event)">
+                <div class="form-group">
+                    <label>Event Type</label>
+                    <select name="eventTypeId" id="event-type-select" required>
+                        <option value="">Select an event type...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Payload (JSON)</label>
+                    <textarea name="payload" id="event-payload" required placeholder='{"key": "value"}'></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('event-modal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Ingest Event</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

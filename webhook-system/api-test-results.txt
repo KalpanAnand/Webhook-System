@@ -1,0 +1,194 @@
+=========================================
+COMPREHENSIVE API TEST RESULTS
+Date: Sun Feb  8 00:52:05 IST 2026
+=========================================
+
+1. ADMIN EVENT TYPE APIs
+[TEST] Create EventType - api.test.order.created
+  Method: POST
+  Endpoint: /api/admin/event-types
+  Request Body: {"eventName": "api.test.order.created", "description": "API test order created"}
+  HTTP Code: 201
+  Response: {"eventTypeId":"et-8cc","eventName":"api.test.order.created","description":"API test order created","message":"EventType created successfully"}
+  Status: PASSED
+---
+[TEST] Create EventType - api.test.payment.success
+  Method: POST
+  Endpoint: /api/admin/event-types
+  Request Body: {"eventName": "api.test.payment.success", "description": "API test payment success"}
+  HTTP Code: 201
+  Response: {"eventTypeId":"et-d34","eventName":"api.test.payment.success","description":"API test payment success","message":"EventType created successfully"}
+  Status: PASSED
+---
+[TEST] List all EventTypes
+  Method: GET
+  Endpoint: /api/admin/event-types
+  HTTP Code: 200
+  Response: [{"eventTypeId":"et-1bb","eventName":"payment.processed","description":"Payment processed event","message":null},{"eventTypeId":"et-1c6","eventName":"test.payment.processed","description":"Test payment processed event","message":null},{"eventTypeId":"et-3fe","eventName":"ORDER_CREATED","description":"Triggered when a new order is created","message":null},{"eventTypeId":"et-552","eventName":"PAYMENT_FAILED","description":"Triggered when a payment attempt fails","message":null},{"eventTypeId":"et-611","eventName":"USER_REGISTERED","description":"Triggered when a new user registers in the system","message":null},{"eventTypeId":"et-65b","eventName":"order.created","description":"Updated description for order.created","message":null},{"eventTypeId":"et-8cc","eventName":"api.test.order.created","description":"API test order created","message":null},{"eventTypeId":"et-8ce","eventName":"ORDER_CANCELLED","description":"Triggered when an existing order is cancelled","message":null},{"eventTypeId":"et-ab1","eventName":"PAYMENT_SUCCESS","description":"Triggered when payment is completed successfully","message":null},{"eventTypeId":"et-c41","eventName":"test-event-new","description":"Test Event","message":null},{"eventTypeId":"et-d34","eventName":"api.test.payment.success","description":"API test payment success","message":null},{"eventTypeId":"et-e44","eventName":"test.order.created","description":"Updated description for test.order.created","message":null}]
+  Status: PASSED
+---
+[TEST] Update EventType
+  Method: PUT
+  Endpoint: /api/admin/event-types/et-8cc
+  Request Body: {"description": "Updated description via API test"}
+  HTTP Code: 200
+  Response: {"eventTypeId":"et-8cc","eventName":"api.test.order.created","description":"Updated description via API test","message":"EventType updated successfully"}
+  Status: PASSED
+---
+
+2. CLIENT APIs
+[TEST] Register Client 1
+  Method: POST
+  Endpoint: /api/clients
+  Request Body: {"organizationName": "APITestOrg1", "contactEmail": "apitest1@example.com"}
+  HTTP Code: 201
+  Response: {"clientId":"c-552","organizationName":"APITestOrg1","contactEmail":"apitest1@example.com","message":"Client registered successfully"}
+  Status: PASSED
+---
+[TEST] Register Client 2
+  Method: POST
+  Endpoint: /api/clients
+  Request Body: {"organizationName": "APITestOrg2", "contactEmail": "apitest2@example.com"}
+  HTTP Code: 201
+  Response: {"clientId":"c-685","organizationName":"APITestOrg2","contactEmail":"apitest2@example.com","message":"Client registered successfully"}
+  Status: PASSED
+---
+[TEST] Register duplicate Client (should fail)
+  Method: POST
+  Endpoint: /api/clients
+  Request Body: {"organizationName": "APITestOrg1", "contactEmail": "duplicate@example.com"}
+  HTTP Code: 409
+  Response: {"message":"Client already registered: APITestOrg1","details":null}
+  Status: PASSED
+---
+
+3. SUBSCRIPTION APIs
+[TEST] Create Subscription 1
+  Method: POST
+  Endpoint: /api/subscribers
+  Request Body: {"clientId": "c-552", "eventTypeId": "et-8cc", "webhookUrl": "http://localhost:9090/webhook1"}
+  HTTP Code: 200
+  Response: {"subscriptionId":"sub-909cd8a0","clientId":"c-552","eventTypeId":"et-8cc","webhookUrl":"http://localhost:9090/webhook1","status":"ACTIVE"}
+  Status: PASSED
+---
+[TEST] Create Subscription 2
+  Method: POST
+  Endpoint: /api/subscribers
+  Request Body: {"clientId": "c-685", "eventTypeId": "et-d34", "webhookUrl": "http://localhost:9090/webhook2"}
+  HTTP Code: 200
+  Response: {"subscriptionId":"sub-197b765e","clientId":"c-685","eventTypeId":"et-d34","webhookUrl":"http://localhost:9090/webhook2","status":"ACTIVE"}
+  Status: PASSED
+---
+[TEST] List all Subscriptions
+  Method: GET
+  Endpoint: /api/subscribers
+  HTTP Code: 200
+  Response: [{"subscriptionId":"sub-197b765e","clientId":"c-685","eventTypeId":"et-d34","webhookUrl":"http://localhost:9090/webhook2","status":"ACTIVE"},{"subscriptionId":"sub-23035dc9","clientId":"c-6b1","eventTypeId":"et-8ce","webhookUrl":"https://webhook.site/dd0a5c5d-64f2-4f9d-b700-b1bcc33114a4","status":"ACTIVE"},{"subscriptionId":"sub-26770d60","clientId":"c-5bc","eventTypeId":"et-3fe","webhookUrl":"https://webhook.site/dd0a5c5d-64f2-4f9d-b700-b1bcc33114a4","status":"ACTIVE"},{"subscriptionId":"sub-283abc5d","clientId":"c-dc3","eventTypeId":"et-8ce","webhookUrl":"https://callback.com/hooks","status":"ACTIVE"},{"subscriptionId":"sub-36201d2d","clientId":"c-b76","eventTypeId":"et-8ce","webhookUrl":"https://webhook.site/dd0a5c5d-64f2-4f9d-b700-b1bcc33114a4","status":"INACTIVE"},{"subscriptionId":"sub-509b7fed","clientId":"c-0a7","eventTypeId":"et-1bb","webhookUrl":"http://localhost:9090/webhook1","status":"ACTIVE"},{"subscriptionId":"sub-572860a4","clientId":"c-5bc","eventTypeId":"et-8ce","webhookUrl":"https://callback.com/hooks","status":"ACTIVE"},{"subscriptionId":"sub-909cd8a0","clientId":"c-552","eventTypeId":"et-8cc","webhookUrl":"http://localhost:9090/webhook1","status":"ACTIVE"},{"subscriptionId":"sub-a535371f","clientId":"c-6b1","eventTypeId":"et-c41","webhookUrl":"http://localhost:9090/webhook","status":"ACTIVE"},{"subscriptionId":"sub-c66eb898","clientId":"c-5bc","eventTypeId":"et-611","webhookUrl":"https://a1b2c3d4.ngrok-free.app/webhook","status":"ACTIVE"},{"subscriptionId":"sub-ecabcba8","clientId":"c-207","eventTypeId":"et-1bb","webhookUrl":"http://localhost:9090/webhook2","status":"INACTIVE"}]
+  Status: PASSED
+---
+[TEST] List unsubscribed for Client 1
+  Method: GET
+  Endpoint: /api/subscribers/c-552/unsubscribed
+  HTTP Code: 200
+  Response: []
+  Status: PASSED
+---
+[TEST] Update Subscription 1
+  Method: PUT
+  Endpoint: /api/subscribers/sub-909cd8a0
+  Request Body: {"eventTypeId": "et-d34"}
+  HTTP Code: 200
+  Response: {"subscriptionId":"sub-909cd8a0","clientId":"c-552","eventTypeId":"et-d34","webhookUrl":"http://localhost:9090/webhook1","status":"ACTIVE"}
+  Status: PASSED
+---
+
+4. EVENT APIs
+[TEST] Ingest Event 1
+  Method: POST
+  Endpoint: /api/events
+  Request Body: {"eventTypeId": "et-8cc", "payload": {"orderId": "ORD-API-001", "amount": 199.99, "customer": "API Test Customer"}}
+  HTTP Code: 200
+  Response: {"eventId":"evt-a03","eventTypeId":"et-8cc","payload":"{\"orderId\":\"ORD-API-001\",\"amount\":199.99,\"customer\":\"API Test Customer\"}","receivedAt":"2026-02-08T00:52:11.086891"}
+  Status: PASSED
+---
+[TEST] Ingest Event 2
+  Method: POST
+  Endpoint: /api/events
+  Request Body: {"eventTypeId": "et-d34", "payload": {"paymentId": "PAY-API-002", "amount": 299.99, "status": "completed", "timestamp": "2026-02-08T00:00:00Z"}}
+  HTTP Code: 200
+  Response: {"eventId":"evt-72c","eventTypeId":"et-d34","payload":"{\"paymentId\":\"PAY-API-002\",\"amount\":299.99,\"status\":\"completed\",\"timestamp\":\"2026-02-08T00:00:00Z\"}","receivedAt":"2026-02-08T00:52:11.107494"}
+  Status: PASSED
+---
+[TEST] List all Events
+  Method: GET
+  Endpoint: /api/events
+  HTTP Code: 200
+  Response: [{"eventId":"evt-179","eventTypeId":"et-8ce","payload":"{\"orderId\":\"ORD-101\",\"amount\":2500,\"status\":\"SUCCESS\"}","receivedAt":"2026-02-08T00:14:59.702902"},{"eventId":"evt-250","eventTypeId":"et-e44","payload":"{\"orderId\":\"123\",\"amount\":99.99,\"customer\":\"John Doe\"}","receivedAt":"2026-02-08T00:50:40.897338"},{"eventId":"evt-2c4","eventTypeId":"et-8ce","payload":"{\"orderId\":\"ORD-101\",\"amount\":2500,\"status\":\"SUCCESS\"}","receivedAt":"2026-02-08T00:09:33.32936"},{"eventId":"evt-72c","eventTypeId":"et-d34","payload":"{\"paymentId\":\"PAY-API-002\",\"amount\":299.99,\"status\":\"completed\",\"timestamp\":\"2026-02-08T00:00:00Z\"}","receivedAt":"2026-02-08T00:52:11.107494"},{"eventId":"evt-745","eventTypeId":"et-1bb","payload":"{\"paymentId\":\"pay-456\",\"amount\":199.99,\"status\":\"completed\"}","receivedAt":"2026-02-08T00:49:01.679264"},{"eventId":"evt-82e","eventTypeId":"et-1c6","payload":"{\"paymentId\":\"pay-456\",\"amount\":199.99,\"status\":\"completed\"}","receivedAt":"2026-02-08T00:50:40.916492"},{"eventId":"evt-a03","eventTypeId":"et-8cc","payload":"{\"orderId\":\"ORD-API-001\",\"amount\":199.99,\"customer\":\"API Test Customer\"}","receivedAt":"2026-02-08T00:52:11.086891"},{"eventId":"evt-af8","eventTypeId":"et-8ce","payload":"{\"orderId\":\"ORD-101\",\"amount\":2500,\"status\":\"SUCCESS\"}","receivedAt":"2026-02-08T00:28:31.896833"},{"eventId":"evt-d20","eventTypeId":"et-65b","payload":"{\"orderId\":\"123\",\"amount\":99.99,\"customer\":\"John Doe\"}","receivedAt":"2026-02-08T00:49:01.654564"}]
+  Status: PASSED
+---
+
+5. DEAD LETTER QUEUE (DLQ) APIs
+[TEST] List DLQ entries
+  Method: GET
+  Endpoint: /api/admin/dlq
+  HTTP Code: 200
+  Response: [{"dlqId":"dlq-1770489965443-775","eventId":"evt-2c4","subscriptionId":"sub-572860a4","failureReason":"Non-2xx response: 403","addedAt":"2026-02-08T00:16:05.443489"},{"dlqId":"dlq-1770489965449-835","eventId":"evt-2c4","subscriptionId":"sub-283abc5d","failureReason":"Non-2xx response: 403","addedAt":"2026-02-08T00:16:05.449752"},{"dlqId":"dlq-1770490122552-775","eventId":"evt-179","subscriptionId":"sub-283abc5d","failureReason":"Non-2xx response: 403","addedAt":"2026-02-08T00:18:42.552322"},{"dlqId":"dlq-1770490122555-438","eventId":"evt-179","subscriptionId":"sub-572860a4","failureReason":"Non-2xx response: 403","addedAt":"2026-02-08T00:18:42.555699"},{"dlqId":"dlq-1770490890684-297","eventId":"evt-af8","subscriptionId":"sub-283abc5d","failureReason":"Non-2xx response: 403","addedAt":"2026-02-08T00:31:30.68493"},{"dlqId":"dlq-1770490890690-515","eventId":"evt-af8","subscriptionId":"sub-572860a4","failureReason":"Non-2xx response: 403","addedAt":"2026-02-08T00:31:30.690832"},{"dlqId":"dlq-1770491949809-114","eventId":"evt-745","subscriptionId":"sub-ecabcba8","failureReason":"Subscription Unsubscribed","addedAt":"2026-02-08T00:49:09.809412"},{"dlqId":"dlq-1770492121206-509","eventId":"evt-745","subscriptionId":"sub-509b7fed","failureReason":null,"addedAt":"2026-02-08T00:52:01.206245"}]
+  Status: PASSED
+---
+
+6. UNSUBSCRIBE API
+[TEST] Unsubscribe Subscription 2
+  Method: POST
+  Endpoint: /api/subscribers/sub-197b765e/unsubscribe
+  HTTP Code: 200
+  Response: {"subscriptionId":"sub-197b765e","clientId":"c-685","eventTypeId":"et-d34","webhookUrl":"http://localhost:9090/webhook2","status":"INACTIVE"}
+  Status: PASSED
+---
+
+7. ERROR CASE TESTS
+[TEST] Create Subscription with invalid clientId (should fail)
+  Method: POST
+  Endpoint: /api/subscribers
+  Request Body: {"clientId": "invalid-client-xyz", "eventTypeId": "invalid-event-xyz", "webhookUrl": "http://localhost:9090/webhook"}
+  HTTP Code: 404
+  Response: {"message":"Client not found: invalid-client-xyz","details":null}
+  Status: PASSED
+---
+[TEST] Create Subscription with invalid eventTypeId (should fail)
+  Method: POST
+  Endpoint: /api/subscribers
+  Request Body: {"clientId": "c-552", "eventTypeId": "invalid-event-xyz", "webhookUrl": "http://localhost:9090/webhook"}
+  HTTP Code: 404
+  Response: {"message":"EventType not found: invalid-event-xyz","details":null}
+  Status: PASSED
+---
+[TEST] Update non-existent subscription (should fail)
+  Method: PUT
+  Endpoint: /api/subscribers/non-existent-sub-xyz
+  Request Body: {"eventTypeId": "some-event"}
+  HTTP Code: 400
+  Response: Subscription not found: non-existent-sub-xyz
+  Status: PASSED
+---
+[TEST] Delete non-existent EventType (should fail)
+  Method: DELETE
+  Endpoint: /api/admin/event-types/non-existent-id-xyz
+  HTTP Code: 404
+  Response: {"message":"EventType not found: non-existent-id-xyz","details":null}
+  Status: PASSED
+---
+[TEST] Delete non-existent DLQ entry (should fail)
+  Method: DELETE
+  Endpoint: /api/admin/dlq/non-existent-dlq-xyz
+  HTTP Code: 404
+  Response: 
+  Status: PASSED
+---
+
+=========================================
+TEST SUMMARY
+=========================================
+Tests Passed: 13
+Tests Failed: 0
+Success Rate: 100%
+Total Tests: 13
