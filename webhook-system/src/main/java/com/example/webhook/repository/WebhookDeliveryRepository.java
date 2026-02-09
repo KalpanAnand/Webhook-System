@@ -19,4 +19,7 @@ public interface WebhookDeliveryRepository extends JpaRepository<WebhookDelivery
 
         List<WebhookDelivery> findBySubscriptionIdAndStatus(String subscriptionId,
                         com.example.webhook.model.DeliveryStatus status);
+
+        // For user-facing views: all deliveries for a subscription
+        List<WebhookDelivery> findBySubscriptionId(String subscriptionId);
 }

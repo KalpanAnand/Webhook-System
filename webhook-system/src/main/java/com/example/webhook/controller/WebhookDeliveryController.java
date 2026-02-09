@@ -29,7 +29,20 @@ public class WebhookDeliveryController {
     @GetMapping
     public ResponseEntity<List<Map<String, Object>>> listDeliveries() {
         List<WebhookDelivery> deliveries = webhookDeliveryRepository.findAll();
-        
+        List<Map<String, Object>> result = mapDeliveriesWithAttempts(deliveries);
+        return ResponseEntity.ok(result);
+    }
+
+    // New: list deliveries for a specific subscription (user-facing)
+    @GetMapping("/subscription/{subscriptionId}")
+    public ResponseEntity<List<Map<String, Object>>> listDeliveriesBySubscription(
+            @PathVariable String subscriptionId) {
+        List<WebhookDelivery> deliveries = webhookDeliveryRepository.findBySubscriptionId(subscriptionId);
+        List<Map<String, Object>> result = mapDeliveriesWithAttempts(deliveries);
+        return ResponseEntity.ok(result);
+    }
+
+    private List<Map<String, Object>> mapDeliveriesWithAttempts(List<WebhookDelivery> deliveries) {
         List<Map<String, Object>> result = deliveries.stream().map(delivery -> {
             Map<String, Object> map = new HashMap<>();
             map.put("id", delivery.getId());
@@ -38,11 +51,11 @@ public class WebhookDeliveryController {
             map.put("status", delivery.getStatus() != null ? delivery.getStatus().name() : "UNKNOWN");
             map.put("nextAttemptAt", delivery.getNextAttemptAt());
             map.put("createdAt", delivery.getCreatedAt());
-            
+
             // Get attempt count
             int attemptCount = deliveryAttemptRepository.countByWebhookDeliveryId(delivery.getId());
             map.put("attemptCount", attemptCount);
-            
+
             // Get latest attempt
             List<DeliveryAttempt> attempts = deliveryAttemptRepository.findByWebhookDeliveryId(delivery.getId());
             if (!attempts.isEmpty()) {
@@ -60,11 +73,10 @@ public class WebhookDeliveryController {
                 map.put("lastAttemptError", latest.getErrorMessage());
                 map.put("lastAttemptResponseCode", latest.getResponseCode());
             }
-            
+
             return map;
         }).collect(Collectors.toList());
-        
-        return ResponseEntity.ok(result);
+        return result;
     }
 
     @GetMapping("/{id}/attempts")

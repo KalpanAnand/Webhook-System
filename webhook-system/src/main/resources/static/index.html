@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
     <div class="container">
         <!-- Sidebar Navigation -->
@@ -19,6 +21,10 @@
                 <a href="#" class="nav-item active" data-section="dashboard">
                     <i class="fas fa-chart-line"></i>
                     <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-section="client-portal">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Client View</span>
                 </a>
                 <a href="#" class="nav-item" data-section="event-types">
                     <i class="fas fa-tags"></i>
@@ -177,6 +183,54 @@
                 </div>
             </section>
 
+            <!-- Client Portal (User View) -->
+            <section id="client-portal" class="content-section">
+                <div class="section-header">
+                    <div>
+                        <h2>Client View</h2>
+                        <p class="section-subtitle">
+                            Enter your Client ID to see all your subscriptions and their status.
+                        </p>
+                    </div>
+                </div>
+
+                <form id="client-portal-form" class="client-portal-form" onsubmit="searchClientSubscriptions(event)">
+                    <div class="form-group">
+                        <label>Client ID</label>
+                        <input type="text" id="client-portal-client-id" required placeholder="e.g., c-552">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> View Subscriptions
+                        </button>
+                    </div>
+                </form>
+
+                <div id="client-portal-summary" class="client-portal-summary">
+                    <!-- Filled by script.js -->
+                </div>
+
+                <div class="table-container" style="margin-top: 1.5rem;">
+                    <h3 style="margin: 1rem;">Subscriptions</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Subscription ID</th>
+                                <th>Event Type</th>
+                                <th>Webhook URL</th>
+                                <th>Status</th>
+                                <th>Deliveries</th>
+                            </tr>
+                        </thead>
+                        <tbody id="client-portal-subs-table">
+                            <tr>
+                                <td colspan="5" class="loading">Enter a Client ID and click "View Subscriptions".</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
             <!-- Events Section -->
             <section id="events" class="content-section">
                 <div class="section-header">
@@ -281,7 +335,8 @@
                     <textarea name="description" required placeholder="Describe this event type"></textarea>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('event-type-modal')">Cancel</button>
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('event-type-modal')">Cancel</button>
                     <button type="submit" class="btn btn-primary">Create</button>
                 </div>
             </form>
@@ -308,7 +363,8 @@
                     <textarea id="update-event-description" name="description" required></textarea>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('update-event-type-modal')">Cancel</button>
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('update-event-type-modal')">Cancel</button>
                     <button type="submit" class="btn btn-primary">Update</button>
                 </div>
             </form>
@@ -353,7 +409,8 @@
             <form id="subscription-form" onsubmit="createSubscription(event)">
                 <div class="form-group">
                     <label>Client ID</label>
-                    <input type="text" name="clientId" id="subscription-client-select" required placeholder="e.g., c-552">
+                    <input type="text" name="clientId" id="subscription-client-select" required
+                        placeholder="e.g., c-552">
                 </div>
                 <div class="form-group">
                     <label>Event Type</label>
@@ -366,7 +423,8 @@
                     <input type="url" name="webhookUrl" required placeholder="https://example.com/webhook">
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('subscription-modal')">Cancel</button>
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('subscription-modal')">Cancel</button>
                     <button type="submit" class="btn btn-primary">Subscribe</button>
                 </div>
             </form>
@@ -391,7 +449,8 @@
                     </select>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('update-subscription-modal')">Cancel</button>
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('update-subscription-modal')">Cancel</button>
                     <button type="submit" class="btn btn-primary">Update</button>
                 </div>
             </form>
@@ -429,6 +488,78 @@
     <!-- Toast Notification -->
     <div id="toast" class="toast"></div>
 
+    <!-- Subscription Deliveries Modal (User view by subscriptionId) -->
+    <div id="subscription-deliveries-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Subscription Deliveries</h3>
+                <button class="modal-close" onclick="closeModal('subscription-deliveries-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div style="padding: 1.5rem;">
+                <div id="subscription-deliveries-summary" class="client-portal-summary" style="margin-bottom: 1rem;">
+                    <!-- Filled by script.js -->
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Delivery ID</th>
+                                <th>Status</th>
+                                <th>Attempts</th>
+                                <th>Last Attempt</th>
+                                <th>Next Attempt</th>
+                                <th>Created At</th>
+                            </tr>
+                        </thead>
+                        <tbody id="subscription-deliveries-table">
+                            <tr>
+                                <td colspan="6" class="loading">Loading deliveries...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delivery Attempts Modal -->
+    <div id="delivery-attempts-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Delivery Attempts</h3>
+                <button class="modal-close" onclick="closeModal('delivery-attempts-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div style="padding: 1.5rem;">
+                <div id="delivery-attempts-summary" class="client-portal-summary" style="margin-bottom: 1rem;">
+                    <!-- Filled by script.js -->
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Attempt #</th>
+                                <th>Status</th>
+                                <th>Time</th>
+                                <th>Response Code</th>
+                                <th>Error Message</th>
+                            </tr>
+                        </thead>
+                        <tbody id="delivery-attempts-table">
+                            <tr>
+                                <td colspan="5" class="loading">Loading attempts...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
+
 </html>
